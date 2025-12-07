@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='backend.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <a href="#dashboard" data-section="dashboard-card">Dashboard</a>
+            <a href="#create-user" data-section="create-user-card">Create User</a>
+            <a href="#delete-user" data-section="delete-user-card">Delete User</a>
+            <a href="#list-users" data-section="list-users-card">List Users</a>
+            <a href="#add-vaccination" data-section="add-vaccination-card">Add Vaccination Record</a>
+            <a href="#manage-vaccination-requests" data-section="manage-vaccination-requests-card">Manage Pending Vaccination Requests</a>
+            <a href="#manage-all-vaccination-requests" data-section="manage-all-vaccination-requests-card">Manage All Vaccination Requests</a>
+            <a href="#list-stocks" data-section="list-stocks-card">Available Stocks</a>
+            <a href="#audit-logs" data-section="audit-logs-card">Audit Logs</a>
+            
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1 id="page-title">Admin Dashboard</h1>
+            <button id="logoutButton" onclick="logout()" class="btn btn-secondary">Logout</button>
+        </header>
+
+        <div class="container">
+            <!-- Dashboard Section with Stats -->
+            <div class="card" id="dashboard-card">
+                <h2 class="section-title">Admin Dashboard</h2>
+                <p>Welcome, Admin. Manage users, vaccinations, or stocks from the sidebar.</p>
+                <div class="stats-section">
+                    <h3>Statistics</h3>
+                    <p>Total Admins: <span id="adminCount">Loading...</span></p>
+                    <p>Total Merchants: <span id="merchantCount">Loading...</span></p>
+                    <p>Total Users: <span id="userCount">Loading...</span></p>
+                    <p>Vaccination Rate: <span id="vaccinationRate">Loading...</span></p>
+                    <canvas id="statsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+          <!-- Create User Section -->
+            <div class="card" id="create-user-card">
+                <h2 class="section-title">Create User</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="createFirstName">First Name</label>
+                        <input id="createFirstName" class="form-control" placeholder="Enter first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createLastName">Last Name</label>
+                        <input id="createLastName" class="form-control" placeholder="Enter last name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createDob">Date of Birth</label>
+                        <input id="createDob" type="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createEmail">Email</label>
+                        <input id="createEmail" class="form-control" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createPassword">Password</label>
+                        <input id="createPassword" type="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createRole">Role</label>
+                        <select id="createRole" class="form-control">
+                            <option value="public">Public</option>
+                            <option value="merchant">Merchant</option>
+                            <option value="government">Government</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="createUser()" class="btn btn-success">Create User</button>
+                <div class="data-display">
+                    <pre id="createResponse"></pre>
+                </div>
+            </div>
+
+            <!-- Delete User Section with Enable/Disable -->
+            <div class="card" id="delete-user-card">
+                <h2 class="section-title">Delete User</h2>
+                <div class="form-group">
+                    <label for="deleteEmail">Email</label>
+                    <input id="deleteEmail" class="form-control" placeholder="Enter email to delete">
+                </div>
+                <button onclick="deleteUser()" class="btn btn-danger">Delete User</button>
+                <div class="form-group">
+                    <label for="toggleEmail">Email to Toggle Status</label>
+                    <input id="toggleEmail" class="form-control" placeholder="Enter email to enable/disable">
+                </div>
+                <button onclick="toggleUserStatus()" class="btn btn-warning">Enable/Disable Account</button>
+                <div class="data-display">
+                    <pre id="deleteResponse"></pre>
+                </div>
+            </div>
+
+            <!-- List Users Section with Live Search -->
+            <div class="card" id="list-users-card">
+                <h2 class="section-title">List Users</h2>
+                <div class="form-group">
+                    <label for="searchUser">Search by Name, Email, or ID</label>
+                    <input id="searchUser" class="form-control" placeholder="Search here..." oninput="searchUsers()">
+                </div>
+                <div class="data-display">
+                    <div id="listResponse"></div>
+                </div>
+            </div>
+
+            <!-- Add Vaccination Record Section -->
+            <div class="card" id="add-vaccination-card">
+                <h2 class="section-title">Add Vaccination Record</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="vaccinationUserId">User ID</label>
+                        <input id="vaccinationUserId" class="form-control" placeholder="Enter user ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccinationStatus">Status</label>
+                        <input id="vaccinationStatus" class="form-control" placeholder="e.g., Vaccinated">
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccinationDate">Date</label>
+                        <input id="vaccinationDate" type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccineType">Vaccine Type</label>
+                        <input id="vaccineType" class="form-control" placeholder="e.g., Pfizer">
+                    </div>
+                </div>
+                <button onclick="addVaccination()" class="btn btn-primary">Add Vaccination</button>
+                <div class="data-display">
+                    <pre id="vaccinationResponse"></pre>
+                </div>
+            </div>
+
+            <!-- List Merchant Stocks Section -->
+            <div class="card" id="list-stocks-card">
+                <h2 class="section-title">Merchant Stocks</h2>
+                <div class="form-group">
+                    <label for="searchStock">Search by Item Name</label>
+                    <input id="searchStock" class="form-control" placeholder="Search here..." oninput="searchStocks()">
+                </div>
+                <div class="data-display">
+                    <div id="stockListResponse">
+                        <p>Loading stock data...</p>
+                    </div>
+                </div>
+            </div>                  
+            <!-- Add a new card for managing vaccination requests -->
+            <div class="card" id="manage-vaccination-requests-card">
+                <h2 class="section-title">Manage Vaccination Requests</h2>
+                <div class="data-display">
+                    <div id="vaccinationRequestsList"></div>
+                </div>
+            </div>
+            <!-- Manage All Vaccination Requests Section -->
+            <div class="card" id="manage-all-vaccination-requests-card">
+                <h2 class="section-title">Manage All Vaccination Requests</h2>
+                <div class="data-display">
+                    <div id="allVaccinationRequestsList"></div>
+                </div>
+            </div>
+            <div class="card" id="audit-logs-card">
+                <h2 class="section-title">Audit Logs</h2>
+                <button onclick="fetchAuditLogs()" class="btn btn-primary">Load Audit Logs</button>
+                <div id="auditLogsContainer" class="data-display"></div>
+            </div>
+            
+
+
+
+
+        </div>
+    </div>
+
+    <!-- Modal for User Details -->
+    <div id="userDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>User Details</h2>
+            <div id="modalUserDetails"></div>
+        </div>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: var(--text-secondary);
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        #modalUserDetails {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        #modalUserDetails p {
+            margin: 0.5rem 0;
+        }
+
+        /* User List Styles */
+        #listResponse ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #listResponse li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #listResponse li:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .details-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .details-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #stockListResponse ul.stock-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #stockListResponse ul.stock-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #stockListResponse ul.stock-list li:last-child {
+            border-bottom: none;
+        }
+
+        #stockListResponse .user-info {
+            flex: 1;
+        }
+
+        #stockListResponse .details-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        #stockListResponse .details-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #auditLogsContainer ul.audit-log-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #auditLogsContainer ul.audit-log-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #auditLogsContainer ul.audit-log-list li:last-child {
+            border-bottom: none;
+        }
+
+        #auditLogsContainer .log-info {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+    </style>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.sidebar a[data-section]');
+        const cards = document.querySelectorAll('.card');
+        const pageTitle = document.getElementById('page-title');
+
+        if (pageTitle) {
+            function showCard(sectionId) {
+                cards.forEach(card => card.classList.remove('active'));
+                const targetCard = document.getElementById(sectionId);
+                if (targetCard) {
+                    targetCard.classList.add('active');
+                }
+
+                navLinks.forEach(link => link.classList.remove('active'));
+                const activeLink = document.querySelector(`.sidebar a[data-section="${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+
+                const titleMap = {
+                    'dashboard-card': 'Dashboard',
+                    'create-user-card': 'Create User',
+                    'delete-user-card': 'Delete User',
+                    'list-users-card': 'List Users',
+                    'add-vaccination-card': 'Add Vaccination Record',
+                    'manage-vaccination-requests-card': 'Manage Pending Vaccination Requests',
+                    'manage-all-vaccination-requests-card': 'Manage All Vaccination Requests',
+                    'list-stocks-card': 'List Stocks',
+                    'audit-logs-card': 'Audit Logs'
+                };
+                pageTitle.textContent = titleMap[sectionId] || 'Dashboard';
+
+                if (sectionId === 'list-users-card') {
+                    listUsers();
+                }
+                if (sectionId === 'manage-vaccination-requests-card') {
+                    listVaccinationRequests();
+                }
+                if (sectionId === 'manage-all-vaccination-requests-card') {
+                    listAllVaccinationRequests();
+                }
+                if (sectionId === 'list-stocks-card') {
+                    listStocks();
+                }
+                if (sectionId === 'audit-logs-card') {
+                    fetchAuditLogs();
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    showCard(sectionId);
+                });
+            });
+
+            showCard('dashboard-card');
+        }
+    });
+</script>
+</html>

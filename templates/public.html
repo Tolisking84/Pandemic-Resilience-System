@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    
+    <div class="sidebar">
+        <h1>Public Dashboard</h1>
+        <nav>
+            <a href="#dashboard" data-section="dashboard-card">Dashboard</a>
+            <a href="#vaccination-request" data-section="vaccination-request-card">Vaccination Request</a>
+            <a href="#vaccination-status" data-section="vaccination-status-card">Vaccination Request Status</a>
+            <a href="#search" data-section="search-card">Find Critical Items</a>
+            <a href="#transactions" data-section="transactions-card">Transactions</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 id="page-title">Public Dashboard</h1>
+            <button id="logoutButton" onclick="logout()" class="btn btn-secondary">Logout</button>
+        </header>
+        <div class="container">
+            <div class="card" id="dashboard-card">
+                <h2 class="section-title">Welcome to Your Dashboard</h2>
+                <p>Explore the options in the sidebar to request vaccinations or check your vaccination status.</p>
+                <div class="data-display">
+                    <h3>Your Profile</h3>
+                    <pre id="userProfileDisplay">Loading your profile...</pre>
+                </div>                
+            </div>
+            <div class="card" id="vaccination-request-card">
+                <h2 class="section-title">Request Vaccination</h2>
+                <form id="vaccinationRequestForm">
+                    <div class="form-group">
+                        <label for="vaccineType">Vaccine Type</label>
+                        <select id="vaccineType" name="vaccineType" class="form-control" required>
+                            <option value="Pfizer">Pfizer</option>
+                            <option value="Moderna">Moderna</option>
+                            <option value="AstraZeneca">AstraZeneca</option>
+                            <option value="Johnson & Johnson">Johnson & Johnson</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+                <form id="pdfUploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="pdfFile">Upload PDF</label>
+                        <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload PDF</button>
+                </form>
+                <p id="pdfUploadResponse"></p>
+            </div>
+            <div class="card" id="vaccination-status-card">
+                <h2 class="section-title">Vaccination Request Status</h2>
+                <p class="refresh-note">Please refresh to update the status of your requests.</p>
+                <div class="data-display">
+                    <table id="vaccinationRequestTable">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Vaccine Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vaccinationRequestTableBody">
+                            <tr><td colspan="4">Loading vaccination request status...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="fetchVaccinationRequestStatus()" class="btn btn-primary">Refresh Status</button>
+                <button onclick="clearVaccinationRequests()" class="btn btn-danger">Clear Pending Requests</button>
+            </div>
+        
+            <div id="vaccinationDetailsModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">×</span>
+                    <h2>Vaccination Request Details</h2>
+                    <p><strong>Request ID:</strong> <span id="modalRequestId"></span></p>
+                    <p><strong>Vaccine Type:</strong> <span id="modalVaccineType"></span></p>
+                    <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Admin Response:</strong> <span id="modalAdminResponse"></span></p>
+                </div>
+            </div>
+            <div class="card" id="search-card">
+                <h2 class="section-title">Find Critical Items</h2>
+                <div class="form-group">
+                  <label for="itemSearch">Item Name</label>
+                  <input id="itemSearch" class="form-control" placeholder="Search items..." oninput="filterItemList()">
+                </div>
+                <div class="data-display">
+                  <ul id="itemList" class="list-group"></ul>
+                </div>
+            </div>
+            <div id="itemDetailsModal" class="modal">
+                <div class="modal-content">
+                  <span class="close" onclick="closeItemModal()">×</span>
+                  <h2>Item Details</h2>
+                  <p><strong>Item:</strong> <span id="modalItemName"></span></p>
+                  <p><strong>Stock:</strong> <span id="modalItemStock"></span></p>
+                  <p><strong>Merchant:</strong> <span id="modalMerchantId"></span></p>
+                </div>
+            </div>
+            <div id="buyModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="document.getElementById('buyModal').style.display='none'">×</span>
+                    <h2>Buy <span id="buyModalItemName"></span></h2>
+                    <p>You can purchase up to <strong><span id="allowedQty">0</span></strong> units.</p>
+                    <div class="form-group">
+                        <label for="purchaseQty">Quantity:</label>
+                        <input type="number" id="purchaseQty" class="form-control" min="1" required oninput="validatePurchaseQty()">
+                        <small id="buyErrorMessage" style="color: red;"></small>
+                    </div>
+                    <button id="completeOrderBtn" class="btn btn-success" onclick="completeOrder()" disabled>Complete Order</button>
+                </div>
+            </div>
+            <div class="card" id="transactions-card">
+                <h2 class="section-title">Your Transactions</h2>
+                <div class="data-display">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <tr><td colspan="4">Loading your transactions...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+            
+        </div>
+        
+    </div>
+    
+    <script src="/static/backend.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.sidebar a');
+            const cards = document.querySelectorAll('.card');
+            const pageTitle = document.getElementById('page-title');
+
+            if (pageTitle) {
+                function showCard(sectionId) {
+                cards.forEach(card => card.classList.remove('active'));
+                const targetCard = document.getElementById(sectionId);
+                if (targetCard) {
+                    targetCard.classList.add('active');
+                }
+
+                navLinks.forEach(link => link.classList.remove('active'));
+                const activeLink = document.querySelector(`.sidebar a[data-section="${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+
+                pageTitle.textContent = 'Dashboard';
+
+                if (sectionId === 'vaccination-status-card') {
+                    fetchVaccinationRequestStatus();
+                }
+                if (sectionId === 'latest-vaccine-card') {
+                    fetchLatestApprovedVaccine();
+                }
+                if (sectionId === 'search-card') {
+                    fetchAllItems();
+                }
+                if (sectionId === 'transactions-card') {
+                    fetchTransactions();
+                }
+            }
+
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const sectionId = link.getAttribute('data-section');
+                        showCard(sectionId);
+                    });
+                });
+
+                showCard('dashboard-card');
+            }
+        });
+    </script>
+    <style>
+        /* Modal Styles */
+        .modal {
+            
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 400px;
+        }
+
+        .close {
+            color: var(--text-secondary);
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        #modalUserDetails {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        #modalUserDetails p {
+            margin: 0.5rem 0;
+        }
+
+        /* User List Styles */
+        #listResponse ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #listResponse li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #listResponse li:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .details-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .details-btn:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+    
+</body>
+</html>

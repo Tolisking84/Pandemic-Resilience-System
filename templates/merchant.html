@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='backend.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>Merchant Dashboard</h1>
+        <nav>
+            <a href="#dashboard" data-section="dashboard-card">Dashboard</a>
+            <a href="#inventory" data-section="inventory-card">Inventory</a>
+            <a href="#manage" data-section="manage-card">Manage Inventory</a>
+            <a href="#prs-id" data-section="prs-id-card">PRS-ID and Vaccination</a>
+            <a href="#vaccination-request" data-section="vaccination-request-card">Vaccination Request</a>
+            <a href="#sales" data-section="sales-card">Sales History</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 id="page-title">Merchant Dashboard</h1>
+            <button id="logoutButton" onclick="logout()" class="btn btn-secondary">Logout</button>
+        </header>
+
+        <div class="container">
+            <div class="card" id="dashboard-card">
+                <h2 class="section-title">Merchant Dashboard</h2>
+                <p>Welcome, Merchant. View or manage your inventory and vaccination records.</p>
+                <div class="total-value">
+                    <h3>Total Inventory Value</h3>
+                    <p id="totalValue">$0.00</p>
+                </div>
+                <div class="stock-chart">
+                    <h3>Stock Overview</h3>
+                    <canvas id="stockChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <div class="card" id="inventory-card">
+                <h2 class="section-title" id="inventoryTitle">Your Inventory</h2>
+                <div class="data-display">
+                    <pre id="inventoryDisplay">No inventory data.</pre>
+                </div>
+            </div>
+
+            <div class="card" id="prs-id-card">
+                <h2 class="section-title">Your Vaccination Record</h2>
+                <div class="data-display">
+                    <pre id="vaccinationDisplay">No records available.</pre>
+                </div>
+            </div>
+
+            <div class="card" id="manage-card">
+                <h2 class="section-title">Manage Inventory</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="itemName">Select Item to Update</label>
+                        <select id="itemName" class="form-control">
+                            <option value="">-- Select an Item --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">New Stock Quantity</label>
+                        <input id="stock" class="form-control" type="number" placeholder="Enter quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input id="price" class="form-control" type="number" step="0.01" placeholder="Enter price">
+                    </div>
+                    <div class="form-group">
+                        <label for="limit">Purchase Limit (Optional)</label>
+                        <input id="limit" class="form-control" type="number" placeholder="Enter purchase limit">
+                    </div>
+                </div>
+                <button onclick="updateStock()" class="btn btn-warning">Update Stock</button>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="newItemName">New Item Name</label>
+                        <input id="newItemName" class="form-control" placeholder="Enter new item name">
+                    </div>
+                    <div class="form-group">
+                        <label for="newItemStock">Initial Stock Quantity</label>
+                        <input id="newItemStock" class="form-control" type="number" placeholder="Enter initial stock">
+                    </div>
+                    <div class="form-group">
+                        <label for="newItemPrice">Price</label>
+                        <input id="newItemPrice" class="form-control" type="number" step="0.01" placeholder="Enter price">
+                    </div>
+                    <div class="form-group">
+                        <label for="newItemLimit">Purchase Limit (Optional)</label>
+                        <input id="newItemLimit" class="form-control" type="number" placeholder="Enter purchase limit">
+                    </div>                    
+                </div>
+                <button onclick="addInventoryItem()" class="btn btn-success">Add New Item</button>
+
+                <div class="form-group">
+                    <label for="removeItemName">Select Item to Remove</label>
+                    <select id="removeItemName" class="form-control">
+                        <option value="">-- Select an Item --</option>
+                    </select>
+                </div>
+                <button onclick="removeInventoryItem()" class="btn btn-danger">Remove Item</button>
+
+                <div class="form-group">
+                    <label for="batchUpdate">Batch Update (JSON format)</label>
+                    <textarea id="batchUpdate" class="form-control" rows="3" placeholder='[{"item_name": "Mask", "stock": 10, "price": 2.50}]'></textarea>
+                </div>
+                <button onclick="batchUpdateStock()" class="btn btn-warning">Batch Update Stock</button>
+
+                <div class="data-display">
+                    <pre id="response"></pre>
+                </div>
+            </div>
+            <div class="card" id="vaccination-request-card">
+                <h2 class="section-title">Vaccination Request</h2>
+                <form id="vaccinationRequestForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="vaccineType">Vaccine Type</label>
+                        <select id="vaccineType" name="vaccineType" class="form-control" required>
+                            <option value="Pfizer">Pfizer</option>
+                            <option value="Moderna">Moderna</option>
+                            <option value="AstraZeneca">AstraZeneca</option>
+                            <option value="Johnson & Johnson">Johnson & Johnson</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfFile">Upload PDF</label>
+                        <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+                <p id="pdfUploadResponse"></p>
+            </div>
+            <div class="card" id="sales-card">
+                <h2 class="section-title">Sales History</h2>
+                <div class="data-display">
+                    <table id="salesTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Date</th>
+                                <th>Buyer</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <tr><td colspan="5">Loading sales...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.sidebar a');
+        const cards = document.querySelectorAll('.card');
+        const pageTitle = document.getElementById('page-title');
+
+        function showCard(sectionId) {
+            cards.forEach(card => card.classList.remove('active'));
+            const targetCard = document.getElementById(sectionId);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+
+            navLinks.forEach(link => link.classList.remove('active'));
+            const activeLink = document.querySelector(`.sidebar a[data-section="${sectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // ΜΟΝΟ αυτό αλλάζει!
+            pageTitle.textContent = 'Dashboard';
+
+            if (sectionId === 'dashboard-card') {
+                fetchMerchantStock();
+            }
+            if (sectionId === 'sales-card') {
+                fetchMerchantSales();
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('data-section');
+                showCard(sectionId);
+            });
+        });
+
+        // Load the dashboard card by default
+        showCard('dashboard-card');
+    });
+</script>
+
+</script>
+
+</html>
