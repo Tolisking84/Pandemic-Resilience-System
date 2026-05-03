@@ -18,7 +18,7 @@ A full-stack web application designed to help manage critical resources, vaccina
 
 ## User Roles & Dashboards
 
-======Government Admin (/admin)===========
+### Government Admin (/admin)
 Create, delete, and manage user accounts.
 
 Toggle user account status (enable/disable).
@@ -33,7 +33,7 @@ View audit logs of all major actions.
 
 View dashboard statistics & charts.
 
-=========Merchant (/merchant)=============
+### Merchant (/merchant)
 Manage stock (add, update, delete items).
 
 Set item stock limits and pricing.
@@ -46,7 +46,7 @@ View sales history.
 
 Generate vaccination PDF certificates.
 
-==========Public User (/public)===============
+### Public User (/public)
 View personal profile & vaccination status.
 
 Request new vaccinations.
@@ -60,31 +60,15 @@ Purchase items (subject to stock and restrictions).
 View personal purchase history.
 
 Download receipts for purchases.
------------------------------------------------------
 
-Credentials
+# Credentials
 
 Role		Email			Password
 Admin		admin@mail.com		123
 Merchant	merchant@mail.com	123
 Public		user@mail.com		123
-----------------------------------------------------
-====================Tech Stack=====================
-Backend: Flask (Python)
 
-Database: MongoDB (via PyMongo)
-
-Frontend: HTML5, CSS3, JavaScript
-
-Authentication: JWT (JSON Web Tokens)
-
-PDF Generation: ReportLab
-
-Charts: Chart.js
-
-Logging: Python Logging Framework
-
-================Features Summary====================
+# Features Summary
 
 Role-based access control with JWT authentication.
 
@@ -102,10 +86,9 @@ User activity tracking (purchase limits, day-based purchase restrictions).
 
 Mobile responsive UI.
 
+## File Structure Overview 
 
-============ File Structure Overview ===================
-
-├── app.py              # Flask backend with routes and logic
+├── app.py              Flask backend with routes and logic
 ├── templates/
 │   ├── admin.html
 │   ├── merchant.html
@@ -113,18 +96,16 @@ Mobile responsive UI.
 │   ├── login.html
 │   ├── register.html
 ├── static/
-│   ├── backend.js      # Frontend JavaScript logic
-│   ├── style.css       # Stylesheet
-├── uploads/            # Vaccination PDFs
-├── .env                # Environment variables
-└── README.md           # (this file)
+│   ├── backend.js      Frontend JavaScript logic
+│   ├── style.css       Stylesheet
+├── uploads/            Vaccination PDFs
+├── .env                Environment variables
+└── README.md           (this file)
 
-=============Security Notes=================================
+# Security Notees
 
 JWT tokens expire in 24 hours!!!!!
 User passwords are hashed using SHA-256 before storage.
 Admin-only actions are protected via decorators.
 HTTPS redirection is enforced (except in development mode).
 Role-specific pages are accessible only with a valid token.
-
-=============================================================
