@@ -63,10 +63,11 @@ Download receipts for purchases.
 
 # Credentials
 
-Role		   Email			      Password<br>
-Admin		   admin@mail.com		123<br>
-Merchant	   merchant@mail.com	123<br>
-Public		user@mail.com		123<br>
+| Role  | Email | Password |
+| ------------- | ------------- | ------------- |
+| Admin  | admin@mail.com  | 123 |
+| Merchant  | merchant@mail.com  | 123 |
+| Public | user@mail.com | 123 |
 
 # Features Summary
 
