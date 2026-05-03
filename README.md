@@ -105,8 +105,8 @@ A full-stack web application designed to help manage critical resources, vaccina
 
 # Security Notees
 
-JWT tokens expire in 24 hours!!!!!
-User passwords are hashed using SHA-256 before storage.
-Admin-only actions are protected via decorators.
-HTTPS redirection is enforced (except in development mode).
-Role-specific pages are accessible only with a valid token.
+1. JWT tokens expire in 24 hours!!!!!
+2. User passwords are hashed using SHA-256 before storage.
+3. Admin-only actions are protected via decorators.
+4. HTTPS redirection is enforced (except in development mode).
+5. Role-specific pages are accessible only with a valid token.
