@@ -71,21 +71,21 @@ A full-stack web application designed to help manage critical resources, vaccina
 
 # Features Summary
 
-Role-based access control with JWT authentication.
+- Role-based access control with JWT authentication.
 
-Secure password hashing (SHA-256).
+- Secure password hashing (SHA-256).
 
-Audit logging for critical actions.
+- Audit logging for critical actions.
 
-Merchant stock management with per-item purchase limits.
+- Merchant stock management with per-item purchase limits.
 
-Vaccination request & approval workflows.
+- Vaccination request & approval workflows.
 
-Dynamic PDF generation for receipts and vaccination certificates.
+- Dynamic PDF generation for receipts and vaccination certificates.
 
-User activity tracking (purchase limits, day-based purchase restrictions).
+- User activity tracking (purchase limits, day-based purchase restrictions).
 
-Mobile responsive UI.
+- Mobile responsive UI.
 
 ## File Structure Overview 
 
