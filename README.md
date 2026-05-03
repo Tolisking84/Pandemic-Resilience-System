@@ -19,47 +19,47 @@ A full-stack web application designed to help manage critical resources, vaccina
 ## User Roles & Dashboards
 
 ### Government Admin (/admin)
-Create, delete, and manage user accounts.
+- Create, delete, and manage user accounts.
 
-Toggle user account status (enable/disable).
+- Toggle user account status (enable/disable).
 
-Add and update vaccination records.
+- Add and update vaccination records.
 
-Manage all vaccination requests.
+- Manage all vaccination requests.
 
-View available merchant stocks.
+- View available merchant stocks.
 
-View audit logs of all major actions.
+- View audit logs of all major actions.
 
-View dashboard statistics & charts.
+- View dashboard statistics & charts.
 
 ### Merchant (/merchant)
-Manage stock (add, update, delete items).
+- Manage stock (add, update, delete items).
 
-Set item stock limits and pricing.
+- Set item stock limits and pricing.
 
-Batch update inventory via JSON.
+- Batch update inventory via JSON.
 
-View vaccination records & request updates.
+- View vaccination records & request updates.
 
-View sales history.
+- View sales history.
 
-Generate vaccination PDF certificates.
+- Generate vaccination PDF certificates.
 
 ### Public User (/public)
-View personal profile & vaccination status.
+- View personal profile & vaccination status.
 
-Request new vaccinations.
+- Request new vaccinations.
 
-Upload vaccination PDF records.
+- Upload vaccination PDF records.
 
-Search for critical items in stock.
+- Search for critical items in stock.
 
-Purchase items (subject to stock and restrictions).
+- Purchase items (subject to stock and restrictions).
 
-View personal purchase history.
+- View personal purchase history.
 
-Download receipts for purchases.
+- Download receipts for purchases.
 
 # Credentials
 
