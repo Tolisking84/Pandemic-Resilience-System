@@ -1,9 +1,6 @@
 # Pandemic Resilience System
 
 A full-stack web application designed to help manage critical resources, vaccination records, and user purchases during pandemics. Supports three distinct user roles with tailored dashboards and functionality.
-
----
-
 ## How to Run
 
 1. Start MongoDB  
