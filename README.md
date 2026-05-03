@@ -63,9 +63,9 @@ Download receipts for purchases.
 
 # Credentials
 
-Role		Email			Password<br>
-Admin		admin@mail.com		123<br>
-Merchant	merchant@mail.com	123<br>
+Role		   Email			      Password<br>
+Admin		   admin@mail.com		123<br>
+Merchant	   merchant@mail.com	123<br>
 Public		user@mail.com		123<br>
 
 # Features Summary
@@ -88,19 +88,19 @@ Mobile responsive UI.
 
 ## File Structure Overview 
 
-├── app.py              Flask backend with routes and logic
-├── templates/
-│   ├── admin.html
-│   ├── merchant.html
-│   ├── public.html
-│   ├── login.html
-│   ├── register.html
-├── static/
-│   ├── backend.js      Frontend JavaScript logic
-│   ├── style.css       Stylesheet
-├── uploads/            Vaccination PDFs
-├── .env                Environment variables
-└── README.md           (this file)
+├── app.py              Flask backend with routes and logic<br>
+├── templates/<br>
+│   ├── admin.html<br>
+│   ├── merchant.html<br>
+│   ├── public.html<br>
+│   ├── login.html<br>
+│   ├── register.html<br>
+├── static/<br>
+│   ├── backend.js      Frontend JavaScript logic<br>
+│   ├── style.css       Stylesheet<br>
+├── uploads/            Vaccination PDFs<br>
+├── .env                Environment variables<br>
+└── README.md           (this file)<br>
 
 # Security Notees
 
